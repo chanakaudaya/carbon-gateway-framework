@@ -290,10 +290,23 @@ public class JoinMediator extends AbstractMediator {
                     messages.add(0, xmlOutput);
                 }
 
-                ByteBuffer newBuffer = ByteBuffer.allocate(b.length * 2);
-                newBuffer.put(b);
-                Buffer n = newBuffer.clear();
-                newMessage.addMessageBody((ByteBuffer) n);
+                if (b.length > 1024) {
+                    int count = 1024;
+                    int init = 0;
+                    while (count < b.length) {
+                        ByteBuffer newbody = ByteBuffer.allocateDirect(1024);
+                        newbody.put(Arrays.copyOfRange(b, init, count));
+                        init = count;
+                        count = (((count + 1024) < b.length) ? count + 1024 : b.length);
+                        newbody.clear();
+                        newMessage.addMessageBody(newbody);
+                    }
+                } else {
+                    ByteBuffer newbody = ByteBuffer.allocateDirect(1024);
+                    newbody.put(b);
+                    newbody.clear();
+                    newMessage.addMessageBody(newbody);
+                }
                 newMessage.setEndOfMsgAdded(true);
                 newMessage.setProperty(Constants.VARIABLE_STACK, null);
                 VariableUtil.addVariable(newMessage, messageRef, newMessage);
