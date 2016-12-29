@@ -67,7 +67,7 @@ public class XmlSplitter {
         System.setProperties(systemProperties);
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setIgnoringComments(true);
-        domFactory.setValidating(false);
+        domFactory.setValidating(true);
         domFactory.setNamespaceAware(true);
         DocumentBuilder builder = domFactory.newDocumentBuilder();
         builder.setErrorHandler(new XmlErrorHandler());
